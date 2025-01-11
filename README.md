@@ -1,79 +1,85 @@
-# Vuetify (Default)
+# BotFusion2
+![BotFusion2 Logo](https://pub-1fdea691c7ef4a9c895b88aeae4d1b68.r2.dev/chatbotfavicon.ico)
 
-This is the official scaffolding tool for Vuetify, designed to give you a head start in building your new Vuetify application. It sets up a base template with all the necessary configurations and standard directory structure, enabling you to begin development without the hassle of setting up the project from scratch.
+BotFusion2 是一个现代化的多机器人对话平台，支持同时与多个AI助手进行对话的Vue 3应用程序。
 
-## ❗️ Important Links
+## 🌟 主要特性
 
-- 📄 [Docs](https://vuetifyjs.com/)
-- 🚨 [Issues](https://issues.vuetifyjs.com/)
-- 🏬 [Store](https://store.vuetifyjs.com/)
-- 🎮 [Playground](https://play.vuetifyjs.com/)
-- 💬 [Discord](https://community.vuetifyjs.com)
+- 💬 多机器人并行对话：同时与多个AI助手进行对话
+- 🤖 灵活的机器人配置：支持自定义添加、编辑和删除机器人
+- 🎨 深色/浅色主题切换：支持自动适配系统主题
+- 📝 Markdown渲染：支持代码高亮显示
+- 💾 会话管理：支持创建、切换和删除会话
+- 🔧 可自定义API设置：支持配置不同的API端点和密钥
 
-## 💿 Install
+## 🛠️ 技术栈
 
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
+- Vue 3 - 渐进式JavaScript框架
+- Vuetify 3 - Material Design组件框架
+- Vite - 现代前端构建工具
+- Pinia - Vue状态管理
+- Marked - Markdown渲染
+- highlight.js - 代码语法高亮
+- DOMPurify - XSS防护
 
-| Package Manager                                                | Command        |
-|---------------------------------------------------------------|----------------|
-| [yarn](https://yarnpkg.com/getting-started)                   | `yarn install` |
-| [npm](https://docs.npmjs.com/cli/v7/commands/npm-install)     | `npm install`  |
-| [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
-| [bun](https://bun.sh/#getting-started)                        | `bun install`  |
+## 🚀 快速开始
 
-After completing the installation, your environment is ready for Vuetify development.
+### 环境要求
 
-## ✨ Features
+- Node.js >= 16.0.0
+- npm >= 7.0.0
 
-- 🖼️ **Optimized Front-End Stack**: Leverage the latest Vue 3 and Vuetify 3 for a modern, reactive UI development experience. [Vue 3](https://v3.vuejs.org/) | [Vuetify 3](https://vuetifyjs.com/en/)
-- 🗃️ **State Management**: Integrated with [Pinia](https://pinia.vuejs.org/), the intuitive, modular state management solution for Vue.
-- 🚦 **Routing and Layouts**: Utilizes Vue Router for SPA navigation and vite-plugin-vue-layouts for organizing Vue file layouts. [Vue Router](https://router.vuejs.org/) | [vite-plugin-vue-layouts](https://github.com/JohnCampionJr/vite-plugin-vue-layouts)
-- ⚡ **Next-Gen Tooling**: Powered by Vite, experience fast cold starts and instant HMR (Hot Module Replacement). [Vite](https://vitejs.dev/)
-- 🧩 **Automated Component Importing**: Streamline your workflow with unplugin-vue-components, automatically importing components as you use them. [unplugin-vue-components](https://github.com/antfu/unplugin-vue-components)
-
-These features are curated to provide a seamless development experience from setup to deployment, ensuring that your Vuetify application is both powerful and maintainable.
-
-## 💡 Usage
-
-This section covers how to start the development server and build your project for production.
-
-### Starting the Development Server
-
-To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000):
+### 安装
 
 ```bash
-yarn dev
+# 克隆项目
+git clone [项目地址]
+
+# 进入项目目录
+cd vuetify-project
+
+# 安装依赖
+npm install
+
+# 启动开发服务器
+npm run dev
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
-
-> Add NODE_OPTIONS='--no-warnings' to suppress the JSON import warnings that happen as part of the Vuetify import mapping. If you are on Node [v21.3.0](https://nodejs.org/en/blog/release/v21.3.0) or higher, you can change this to NODE_OPTIONS='--disable-warning=5401'. If you don't mind the warning, you can remove this from your package.json dev script.
-
-### Building for Production
-
-To build your project for production, use:
+### 构建
 
 ```bash
-yarn build
+# 构建生产版本
+npm run build
+
+# 预览生产构建
+npm run preview
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+## 🔧 配置说明
 
-Once the build process is completed, your application will be ready for deployment in a production environment.
+### 机器人配置
 
-## 💪 Support Vuetify Development
+1. 点击侧边栏的"添加机器人"
+2. 填写以下信息：
+   - 名称：机器人显示名称
+   - Base URL：API基础地址
+   - API Key：访问密钥
+   - Model：模型名称（如：gpt-3.5-turbo）
 
-This project is built with [Vuetify](https://vuetifyjs.com/en/), a UI Library with a comprehensive collection of Vue components. Vuetify is an MIT licensed Open Source project that has been made possible due to the generous contributions by our [sponsors and backers](https://vuetifyjs.com/introduction/sponsors-and-backers/). If you are interested in supporting this project, please consider:
+## 📝 使用说明
 
-- [Requesting Enterprise Support](https://support.vuetifyjs.com/)
-- [Sponsoring John on Github](https://github.com/users/johnleider/sponsorship)
-- [Sponsoring Kael on Github](https://github.com/users/kaelwd/sponsorship)
-- [Supporting the team on Open Collective](https://opencollective.com/vuetify)
-- [Becoming a sponsor on Patreon](https://www.patreon.com/vuetify)
-- [Becoming a subscriber on Tidelift](https://tidelift.com/subscription/npm/vuetify)
-- [Making a one-time donation with Paypal](https://paypal.me/vuetify)
+1. **创建新对话**：点击侧边栏的"新建对话"按钮
+2. **切换主题**：使用顶部的主题切换开关
+3. **发送消息**：在底部输入框输入消息，点击发送按钮或按Enter键
+4. **管理会话**：在侧边栏可以切换或删除会话
+5. **复制消息**：点击消息下方的复制按钮可复制内容
 
-## 📑 License
-[MIT](http://opensource.org/licenses/MIT)
+## 🔐 安全说明
 
-Copyright (c) 2016-present Vuetify, LLC
+- API密钥等敏感信息仅存储在本地
+- 使用DOMPurify进行XSS防护
+- 所有API请求都经过安全验证
+
+## 📄 许可证
+
+[MIT License](LICENSE)
