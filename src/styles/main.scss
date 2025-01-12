@@ -1,0 +1,23 @@
+// 隐藏所有滚动条但保持滚动功能
+* {
+    // Firefox
+    scrollbar-width: none;
+    // IE
+    -ms-overflow-style: none;
+
+    // Chrome, Safari, Opera
+    &::-webkit-scrollbar {
+        display: none;
+        width: 0;
+        height: 0;
+    }
+}
+
+// 确保页面不会出现滚动条
+html,
+body {
+    overflow: hidden;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+}

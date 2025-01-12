@@ -16,7 +16,7 @@ const routes = [
         path: '',
         name: 'Chat',
         component: () => import('@/pages/ChatPage.vue'),
-      },
+      }
     ],
   },
 ]
