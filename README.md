@@ -1,7 +1,10 @@
-# BotFusion2
-![BotFusion2 Logo](https://pub-1fdea691c7ef4a9c895b88aeae4d1b68.r2.dev/chatbotfavicon.ico)
+# BotFusion
 
-BotFusion2 是一个现代化的多机器人对话平台，支持同时与多个AI助手进行对话的Vue 3应用程序。
+<div align="center">
+    <img src="https://pub-1fdea691c7ef4a9c895b88aeae4d1b68.r2.dev/chatbotfavicon.ico" alt="BotFusion Logo" width="128" height="128" />
+</div>
+
+BotFusion 是一个现代化的多机器人对话平台，支持同时与多个AI助手进行对话的Vue 3应用程序。
 
 ## 🌟 主要特性
 
@@ -61,10 +64,10 @@ npm run preview
 
 1. 点击侧边栏的"添加机器人"
 2. 填写以下信息：
-   - 名称：机器人显示名称
-   - Base URL：API基础地址
-   - API Key：访问密钥
-   - Model：模型名称（如：gpt-3.5-turbo）
+    - 名称：机器人显示名称
+    - Base URL：API基础地址
+    - API Key：访问密钥
+    - Model：模型名称（如：gpt-3.5-turbo）
 
 ## 📝 使用说明
 

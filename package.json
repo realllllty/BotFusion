@@ -10,6 +10,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.15.0",
     "@mdi/font": "7.4.47",
     "dompurify": "^3.2.3",
     "highlight.js": "^11.11.1",
@@ -19,6 +20,7 @@
     "uuid": "^11.0.5",
     "vue": "^3.4.31",
     "vue-splitpane": "^1.0.6",
+    "vue3-google-login": "^2.0.33",
     "vuetify": "^3.6.14"
   },
   "devDependencies": {

@@ -10,16 +10,22 @@
       <!-- 主题切换 -->
       <v-list-item>
         <template v-slot:prepend>
-          <v-icon :icon="theme.global.current.value.dark ? 'mdi-weather-night' : 'mdi-weather-sunny'"
-            :color="theme.global.current.value.dark ? 'blue-lighten-3' : 'amber-darken-2'" />
+          <v-icon :icon="theme.global.current.value.dark
+              ? 'mdi-weather-night'
+              : 'mdi-weather-sunny'
+            " :color="theme.global.current.value.dark
+                            ? 'blue-lighten-3'
+                            : 'amber-darken-2'
+                          " />
         </template>
-        <v-list-item-title>{{ theme.global.current.value.dark ? '深色模式' : '浅色模式' }}</v-list-item-title>
+        <v-list-item-title>{{
+          theme.global.current.value.dark ? '深色模式' : '浅色模式'
+        }}</v-list-item-title>
         <template v-slot:append>
           <v-switch v-model="theme.global.name.value" :true-value="'dark'" :false-value="'light'" hide-details inset
             density="compact" />
         </template>
       </v-list-item>
-
       <v-divider class="my-2" />
 
       <!-- 机器人管理 -->
@@ -50,8 +56,9 @@
         :active="currentConversationId === conversation.id" @click="$emit('set-conversation', conversation.id)">
         <template v-slot:append>
           <div class="chat-sidebar__conversation-actions">
-            <v-btn icon size="small" variant="text" color="error" :disabled="conversations.length === 1"
-              @click.stop="$emit('delete-conversation', conversation.id)">
+            <v-btn icon size="small" variant="text" color="error" :disabled="conversations.length === 1" @click.stop="
+              $emit('delete-conversation', conversation.id)
+              ">
               <v-icon>mdi-delete-outline</v-icon>
               <v-tooltip activator="parent" location="top">删除对话</v-tooltip>
             </v-btn>
@@ -122,7 +129,7 @@ const theme = useTheme()
   }
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   .chat-sidebar {
     border-color: rgba(255, 255, 255, 0.12);
   }

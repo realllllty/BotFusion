@@ -21,3 +21,23 @@ body {
     margin: 0;
     padding: 0;
 }
+
+// 导入 JetBrains Mono 字体
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+// 全局字体设置
+:root {
+    --app-font-family: 'JetBrains Mono', monospace;
+}
+
+body {
+    font-family: var(--app-font-family);
+}
+
+// 应用到代码相关元素
+pre,
+code,
+.v-field__input,
+.chat-message__text {
+    font-family: var(--app-font-family) !important;
+}

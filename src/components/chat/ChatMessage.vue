@@ -1,211 +1,249 @@
 <template>
-    <div :class="['chat-message', `chat-message--${message.role}`]">
-        <v-card
-            :class="[
-                'chat-message__card',
-                { 'chat-message__card--error': message.isError }
-            ]"
-            :color="message.role === 'user' ? 'primary' : 'surface'"
-            :variant="message.role === 'user' ? 'flat' : 'elevated'"
-            elevation="1"
-        >
-            <!-- 消息头部 -->
-            <v-card-item class="chat-message__header">
-                <template v-slot:prepend>
-                    <v-avatar
-                        :color="
-                            message.role === 'user'
-                                ? 'primary-darken-1'
-                                : 'primary'
-                        "
-                        :variant="message.role === 'user' ? 'flat' : 'tonal'"
-                    >
-                        <v-icon
-                            :icon="
-                                message.role === 'user'
-                                    ? 'mdi-account'
-                                    : 'mdi-robot'
-                            "
-                            :color="
-                                message.role === 'user' ? 'white' : 'primary'
-                            "
-                        />
-                    </v-avatar>
-                </template>
-                <v-card-title class="text-subtitle-2">
-                    {{ message.role === 'user' ? '你' : botName }}
-                </v-card-title>
-                <v-card-subtitle class="text-caption">
-                    {{ formatTime(message.timestamp) }}
-                </v-card-subtitle>
-            </v-card-item>
-
-            <!-- 消息内容 -->
-            <v-card-text
-                :class="[
-                    'chat-message__content',
-                    { 'chat-message__content--user': message.role === 'user' }
-                ]"
-            >
-                <div
-                    :class="[
-                        'chat-message__text',
-                        {
-                            'markdown-body': message.role === 'assistant',
-                            'chat-message__text--streaming': message.isStreaming
-                        }
-                    ]"
-                    v-if="message.role === 'assistant'"
-                    v-html="renderMarkdown(message.content)"
-                />
-                <div v-else>{{ message.content }}</div>
-                <div v-if="message.isStreaming" class="chat-message__streaming">
-                    <span class="chat-message__streaming-dot"></span>
-                    <span class="chat-message__streaming-dot"></span>
-                    <span class="chat-message__streaming-dot"></span>
-                </div>
-            </v-card-text>
-
-            <!-- 消息操作按钮 -->
-            <v-card-actions
-                v-if="message.role === 'assistant'"
-                class="chat-message__actions"
-            >
-                <v-spacer />
-                <v-btn
-                    variant="text"
-                    density="comfortable"
-                    prepend-icon="mdi-content-copy"
-                    @click="copyMessage"
-                >
-                    复制
-                </v-btn>
-            </v-card-actions>
-        </v-card>
+  <div :class="['chat-message', `chat-message--${message.role}`]">
+    <div class="chat-message__header">
+      <v-avatar :color="message.role === 'user' ? 'primary-darken-1' : 'primary'"
+        :variant="message.role === 'user' ? 'flat' : 'tonal'" size="32">
+        <v-icon :icon="message.role === 'user' ? 'mdi-account' : 'mdi-robot'"
+          :color="message.role === 'user' ? 'white' : 'primary'" size="16" />
+      </v-avatar>
+      <div class="chat-message__info">
+        <span class="chat-message__name">{{ message.role === 'user' ? '你' : botName }}</span>
+        <span class="chat-message__time">{{ formatTime(message.timestamp) }}</span>
+      </div>
     </div>
-</template>
 
+    <div :class="['chat-message__content', { 'chat-message__content--error': message.isError }]">
+      <div
+        :class="['chat-message__text', { 'markdown-body': message.role === 'assistant', 'chat-message__text--streaming': message.isStreaming }]"
+        v-if="message.role === 'assistant'" v-html="renderMarkdown(message.content)" />
+      <div v-else>{{ message.content }}</div>
+      <div v-if="message.isStreaming" class="chat-message__streaming">
+        <span class="chat-message__streaming-dot"></span>
+        <span class="chat-message__streaming-dot"></span>
+        <span class="chat-message__streaming-dot"></span>
+      </div>
+    </div>
+
+    <div v-if="message.role === 'assistant'" class="chat-message__actions">
+      <v-btn variant="text" density="comfortable" size="small" prepend-icon="mdi-content-copy"
+        @click="copyMessage">复制</v-btn>
+    </div>
+  </div>
+</template>
 <script setup>
 import { Marked } from 'marked'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
+import 'highlight.js/styles/github.css'
+
+
 
 const props = defineProps({
-    message: {
-        type: Object,
-        required: true
-    },
-    botName: {
-        type: String,
-        required: true
-    }
+  message: {
+    type: Object,
+    required: true
+  },
+  botName: {
+    type: String,
+    required: true
+  }
 })
 
 const marked = new Marked(
-    markedHighlight({
-        emptyLangClass: 'hljs',
-        langPrefix: 'hljs language-',
-        highlight(code, lang) {
-            const language = hljs.getLanguage(lang) ? lang : 'plaintext'
-            return hljs.highlight(code, { language }).value
-        }
-    })
+  markedHighlight({
+    emptyLangClass: 'hljs',
+    langPrefix: 'hljs language-',
+    highlight(code, lang) {
+      const language = hljs.getLanguage(lang) ? lang : 'plaintext'
+      return hljs.highlight(code, { language }).value
+    }
+  })
 )
 
 const formatTime = (timestamp) => {
-    return new Date(timestamp).toLocaleTimeString()
+  return new Date(timestamp).toLocaleTimeString()
 }
 
 const renderMarkdown = (content) => {
-    const html = marked.parse(content)
-    return DOMPurify.sanitize(html)
+  const html = marked.parse(content)
+  return DOMPurify.sanitize(html)
 }
 
 const copyMessage = async () => {
-    try {
-        await navigator.clipboard.writeText(props.message.content)
-    } catch (err) {
-        console.error('复制失败:', err)
-    }
+  try {
+    await navigator.clipboard.writeText(props.message.content)
+  } catch (err) {
+    console.error('复制失败:', err)
+  }
 }
 </script>
 
 <style lang="scss" scoped>
 .chat-message {
-    max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  transition: background-color 0.2s;
+  border-radius: 8px;
 
-    &--user {
-        align-self: flex-end;
+  &:hover {
+    background: rgba(var(--v-theme-surface-variant), 0.5);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__info {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  &__name {
+    font-weight: 500;
+    font-size: 0.875rem;
+  }
+
+  &__time {
+    color: rgba(var(--v-theme-on-surface), 0.6);
+    font-size: 0.75rem;
+  }
+
+  &__content {
+
+    &--error {
+      color: rgb(var(--v-theme-error));
+    }
+  }
+
+  &__text {
+    word-break: break-word;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+
+    &--streaming {
+      opacity: 0.7;
     }
 
-    &--assistant {
-        align-self: flex-start;
-    }
+    &.markdown-body {
+      :deep(p) {
+        margin: 0.5em 0;
+        line-height: 1.6;
+      }
 
-    &__card {
-        max-width: 100%;
+      :deep(h1),
+      :deep(h2),
+      :deep(h3),
+      :deep(h4),
+      :deep(h5),
+      :deep(h6) {
+        margin: 1em 0 0.5em;
+        line-height: 1.4;
+      }
 
-        &--error {
-            border: 1px solid rgb(var(--v-theme-error));
+      :deep(ul),
+      :deep(ol) {
+        margin: 0.5em 0;
+        padding-left: 1.5em;
+
+        li {
+          margin: 0.3em 0;
         }
-    }
+      }
 
-    &__header {
-        padding: 8px 16px;
-    }
+      :deep(pre) {
+        margin: 0.8em 0;
+        padding: 1em;
+        background: rgba(var(--v-theme-surface-variant), 0.5);
+        border-radius: 8px;
 
-    &__content {
-        padding: 16px;
-
-        &--user {
-            color: white;
+        code {
+          padding: 0;
+          background: none;
         }
-    }
+      }
 
-    &__text {
-        word-break: break-word;
+      :deep(code) {
+        padding: 0.2em 0.4em;
+        background: rgba(var(--v-theme-surface-variant), 0.5);
+        border-radius: 4px;
+        font-size: 0.875em;
+      }
 
-        &--streaming {
-            opacity: 0.7;
+      :deep(blockquote) {
+        margin: 0.8em 0;
+        padding: 0.5em 1em;
+        border-left: 4px solid rgba(var(--v-theme-primary), 0.5);
+        background: rgba(var(--v-theme-surface-variant), 0.3);
+        border-radius: 4px;
+
+        p {
+          margin: 0;
         }
-    }
+      }
 
-    &__streaming {
-        display: flex;
-        gap: 4px;
-        margin-top: 8px;
-        justify-content: center;
-    }
+      :deep(table) {
+        margin: 0.8em 0;
+        border-collapse: collapse;
+        width: 100%;
 
-    &__streaming-dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        background: currentColor;
-        animation: pulse 1.4s infinite;
-        opacity: 0.5;
-
-        &:nth-child(2) {
-            animation-delay: 0.2s;
+        th,
+        td {
+          padding: 0.5em;
+          border: 1px solid rgba(var(--v-theme-on-surface), 0.12);
         }
 
-        &:nth-child(3) {
-            animation-delay: 0.4s;
+        th {
+          background: rgba(var(--v-theme-surface-variant), 0.5);
         }
+      }
     }
+  }
+
+  &__streaming {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+    justify-content: flex-start;
+    padding-left: 4px;
+  }
+
+  &__streaming-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1.4s infinite;
+    opacity: 0.5;
+
+    &:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+  }
+
+  &__actions {}
 }
 
 @keyframes pulse {
-    0%,
-    100% {
-        opacity: 0.5;
-        transform: scale(1);
-    }
 
-    50% {
-        opacity: 1;
-        transform: scale(1.2);
-    }
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
 }
 </style>
