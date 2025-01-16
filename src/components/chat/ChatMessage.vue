@@ -1,13 +1,14 @@
 <template>
   <div :class="['chat-message', `chat-message--${message.role}`]">
     <div class="chat-message__header">
-      <v-avatar :color="message.role === 'user' ? 'primary-darken-1' : 'primary'"
+      <v-avatar v-if="message.role === 'user' && userStore.user.photoURL" :image="userStore.user.photoURL" size="32" />
+      <v-avatar v-else :color="message.role === 'user' ? 'primary-darken-1' : 'primary'"
         :variant="message.role === 'user' ? 'flat' : 'tonal'" size="32">
         <v-icon :icon="message.role === 'user' ? 'mdi-account' : 'mdi-robot'"
           :color="message.role === 'user' ? 'white' : 'primary'" size="16" />
       </v-avatar>
       <div class="chat-message__info">
-        <span class="chat-message__name">{{ message.role === 'user' ? '你' : botName }}</span>
+        <span class="chat-message__name">{{ message.role === 'user' ? userName : botName }}</span>
         <span class="chat-message__time">{{ formatTime(message.timestamp) }}</span>
       </div>
     </div>
@@ -36,8 +37,10 @@ import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import DOMPurify from 'dompurify'
 import 'highlight.js/styles/github.css'
+import { useUserStore } from '@/stores/user'
+import { computed } from 'vue'
 
-
+const userStore = useUserStore()
 
 const props = defineProps({
   message: {
@@ -47,6 +50,20 @@ const props = defineProps({
   botName: {
     type: String,
     required: true
+  }
+})
+
+// 计算用户名称
+const userName = computed(() => userStore.user.name || '你')
+
+// 计算用户头像
+const userAvatar = computed(() => {
+  if (userStore.user.photoURL) {
+    return { src: userStore.user.photoURL }
+  }
+  return {
+    color: 'primary-darken-1',
+    icon: 'mdi-account'
   }
 })
 

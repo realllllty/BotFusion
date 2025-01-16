@@ -1,4 +1,7 @@
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
-// vuetify plugin 需要用
-export default createPinia()
+const pinia = createPinia()
+pinia.use(piniaPluginPersistedstate)
+
+export default pinia

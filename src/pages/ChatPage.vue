@@ -9,12 +9,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useChat } from '@/stores/chat'
+import { useChatStore } from '@/stores/chat'
 import { useBotStore } from '@/stores/bot'
 import ChatArea from '@/components/chat/ChatArea.vue'
 import ChatInput from '@/components/chat/ChatInput.vue'
 
-const chatStore = useChat()
+const chatStore = useChatStore()
 const botStore = useBotStore()
 
 // 状态

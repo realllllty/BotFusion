@@ -1,82 +1,85 @@
 <template>
   <div class="chat-sidebar">
-    <!-- <div class="chat-sidebar__header">
-      <div class="chat-sidebar__logo">
-        <v-icon size="32" color="primary">mdi-robot-excited</v-icon>
-        <span class="chat-sidebar__title">BotFusion</span>
-      </div>
-    </div> -->
     <v-list>
-      <!-- 主题切换 -->
-      <v-list-item>
+      <!-- BotFusion 标题 -->
+      <v-list-item class="chat-sidebar__brand">
         <template v-slot:prepend>
-          <v-icon :icon="theme.global.current.value.dark
-              ? 'mdi-weather-night'
-              : 'mdi-weather-sunny'
-            " :color="theme.global.current.value.dark
-                            ? 'blue-lighten-3'
-                            : 'amber-darken-2'
-                          " />
+          <v-icon icon="mdi-robot" class="brand-icon" />
         </template>
-        <v-list-item-title>{{
-          theme.global.current.value.dark ? '深色模式' : '浅色模式'
-        }}</v-list-item-title>
-        <template v-slot:append>
-          <v-switch v-model="theme.global.name.value" :true-value="'dark'" :false-value="'light'" hide-details inset
-            density="compact" />
-        </template>
-      </v-list-item>
-      <v-divider class="my-2" />
-
-      <!-- 机器人管理 -->
-      <v-list-subheader>机器人管理</v-list-subheader>
-      <v-list-item prepend-icon="mdi-plus" title="添加机器人" @click="$emit('show-bot-dialog')" />
-      <v-list-item v-for="bot in botConfigs" :key="bot.id" :title="bot.name" :subtitle="bot.model">
-        <template v-slot:append>
-          <div class="chat-sidebar__bot-actions">
-            <v-btn icon size="small" variant="text" @click.stop="$emit('edit-bot', bot)">
-              <v-icon>mdi-cog</v-icon>
-              <v-tooltip activator="parent" location="top">编辑机器人</v-tooltip>
-            </v-btn>
-            <v-btn v-if="bot.id !== 'default'" icon size="small" variant="text" color="error"
-              @click.stop="$emit('remove-bot', bot.id)">
-              <v-icon>mdi-delete-outline</v-icon>
-              <v-tooltip activator="parent" location="top">删除机器人</v-tooltip>
-            </v-btn>
+        <template v-slot:title>
+          <div class="brand-title">
+            <span class="brand-title__primary">Bot</span>
+            <span class="brand-title__secondary">Fusion</span>
           </div>
         </template>
       </v-list-item>
 
       <v-divider class="my-2" />
 
-      <!-- 对话列表 -->
-      <v-list-subheader>对话列表</v-list-subheader>
-      <v-list-item prepend-icon="mdi-plus" title="新建对话" @click="$emit('create-conversation')" />
-      <v-list-item v-for="conversation in conversations" :key="conversation.id" :title="conversation.title"
+      <!-- 用户信息 -->
+      <v-list-item class="chat-sidebar__userInfo">
+        <template v-slot:prepend>
+          <v-avatar :image="userStore.user.photoURL" size="24" />
+        </template>
+        <template v-slot:title>
+          {{ userStore.user.name }}
+        </template>
+        <template v-slot:append>
+          <v-btn icon size="small" variant="text" color="primary" @click="uploadGoogleDrive" :loading="isUploadLoading"
+            :disabled="!userStore.isLoggedIn">
+            <v-icon>mdi-google-drive</v-icon>
+            <v-tooltip activator="parent" location="right">备份到 Google Drive</v-tooltip>
+          </v-btn>
+        </template>
+      </v-list-item>
+
+      <!-- 设置页面 -->
+      <v-list-item prepend-icon="mdi-cog" title="设置" @click="$emit('show-settings')" />
+      <v-divider class="my-2" />
+
+
+      <v-list-item prepend-icon="mdi-plus" @click="$emit('create-conversation')">
+        <template v-slot:title>
+          <span class="text-truncate">新建对话</span>
+        </template>
+        <template v-slot:prepend>
+          <v-icon>mdi-plus</v-icon>
+          <v-tooltip activator="parent" location="right">新建对话</v-tooltip>
+        </template>
+      </v-list-item>
+
+      <v-list-item v-for="conversation in conversations" :key="conversation.id"
         :active="currentConversationId === conversation.id" @click="$emit('set-conversation', conversation.id)">
+        <template v-slot:prepend>
+          <v-icon>mdi-chat</v-icon>
+          <v-tooltip activator="parent" location="right">{{ conversation.title }}</v-tooltip>
+        </template>
+        <v-list-item-title class="text-truncate">{{ conversation.title }}</v-list-item-title>
         <template v-slot:append>
           <div class="chat-sidebar__conversation-actions">
-            <v-btn icon size="small" variant="text" color="error" :disabled="conversations.length === 1" @click.stop="
-              $emit('delete-conversation', conversation.id)
-              ">
+            <v-btn icon size="small" variant="text" color="error" :disabled="conversations.length === 1"
+              @click.stop="$emit('delete-conversation', conversation.id)">
               <v-icon>mdi-delete-outline</v-icon>
-              <v-tooltip activator="parent" location="top">删除对话</v-tooltip>
+              <v-tooltip activator="parent" location="right">删除对话</v-tooltip>
             </v-btn>
           </div>
         </template>
       </v-list-item>
     </v-list>
+
+    <!-- 提示消息 -->
+    <v-snackbar v-model="showSnackbar" :color="snackbarColor" :timeout="3000">
+      {{ snackbarText }}
+    </v-snackbar>
   </div>
 </template>
 
 <script setup>
-import { useTheme } from 'vuetify'
+import { ref } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useDriveStore } from '@/stores/drive'
 
 const props = defineProps({
-  botConfigs: {
-    type: Array,
-    required: true
-  },
   conversations: {
     type: Array,
     required: true
@@ -87,45 +90,99 @@ const props = defineProps({
   }
 })
 
+const userStore = useUserStore()
+const driveStore = useDriveStore()
+
+const isUploadLoading = ref(false)
+const showSnackbar = ref(false)
+const snackbarText = ref('')
+const snackbarColor = ref('success')
+
 defineEmits([
-  'show-bot-dialog',
-  'edit-bot',
-  'remove-bot',
   'create-conversation',
   'set-conversation',
-  'delete-conversation'
+  'delete-conversation',
+  'show-settings'
 ])
 
-const theme = useTheme()
+async function uploadGoogleDrive() {
+  if (!userStore.isLoggedIn) {
+    snackbarColor.value = 'error'
+    snackbarText.value = '请先登录 Google 账号'
+    showSnackbar.value = true
+    return
+  }
+  isUploadLoading.value = true
+  try {
+    await driveStore.saveAllData()
+    snackbarColor.value = 'success'
+    snackbarText.value = '备份成功'
+    showSnackbar.value = true
+  } catch (error) {
+    console.error('上传备份文件失败:', error)
+    snackbarColor.value = 'error'
+    snackbarText.value = '备份失败: ' + error.message
+    showSnackbar.value = true
+  } finally {
+    isUploadLoading.value = false
+  }
+}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .chat-sidebar {
-  width: 300px;
-  border-right: 1px solid rgba(0, 0, 0, 0.12);
+  width: 100%;
   display: flex;
   flex-direction: column;
+  position: relative;
+  height: 100%;
 
-  &__header {
-    padding: 16px;
+  &__brand {
+    padding: 12px 16px;
+
+    .brand-icon {
+      color: rgb(var(--v-theme-primary));
+    }
+
+    .brand-title {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      &__primary {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: rgb(var(--v-theme-primary));
+      }
+
+      &__secondary {
+        font-size: 1.5rem;
+        font-weight: 300;
+      }
+    }
   }
 
-  &__logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  &__userInfo {
+    .v-list-item-title {
+      font-size: 1.2rem !important;
+    }
+
+    .v-list-item__prepend {
+      margin-right: 18px !important;
+    }
   }
 
-  &__title {
-    font-size: 1.25rem;
-    font-weight: 500;
+  :deep(.v-list-item--active) {
+    .v-icon {
+      color: rgb(var(--v-theme-primary));
+    }
   }
 
-  &__bot-actions,
   &__conversation-actions {
     display: flex;
     align-items: center;
     gap: 4px;
+    transition: opacity 0.2s ease;
   }
 }
 

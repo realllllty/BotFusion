@@ -14,5 +14,6 @@ declare module 'vue' {
     ChatSidebar: typeof import('./src/components/chat/ChatSidebar.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SettingsDialog: typeof import('./src/components/SettingsDialog.vue')['default']
   }
 }
